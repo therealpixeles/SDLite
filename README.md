@@ -74,7 +74,8 @@ SDLite requires **SDL2** and **SDL2_image** to be installed on your system.
 
 👉 Full installation and build instructions have been moved to:  
 [INSTALL.md](INSTALL.md).
-[Build instructions](build.md)
+
+[BUILD.md](BUILD.md)
 
 ---
 
