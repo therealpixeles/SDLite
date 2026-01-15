@@ -32,6 +32,20 @@ C:\mingw64\bin
 
 Then add this to your system **PATH** so the compiler is available in the terminal.
 
+Next, download the **SDL2** and **SDL2_image** MinGW-w64 development packages from the official SDL GitHub releases:
+
+- SDL2: https://github.com/libsdl-org/SDL/releases
+- SDL2_image: https://github.com/libsdl-org/SDL_image/releases
+
+Extract them into a folder such as:
+
+```text
+external/SDL2/
+external/SDL2_image/
+```
+
+so the include and lib paths used in the build commands match your layout.
+
 ---
 
 ### Building (Windows)
