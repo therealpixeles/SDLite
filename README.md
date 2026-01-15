@@ -73,7 +73,7 @@ scripts/          → Build scripts
 SDLite requires **SDL2** and **SDL2_image** to be installed on your system.
 
 👉 Full installation and build instructions have been moved to:  
-**INSTALL.md**
+[INSTALL.md](INSTALL.md).
 
 ---
 
