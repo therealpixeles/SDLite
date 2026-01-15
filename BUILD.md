@@ -1,20 +1,20 @@
-# Building SDLite, Installer, and others.
+# 🛠️ BUILD.md
 
-This document explains how to build projects that use **SDLite** (and how to build SDLite itself) on Windows and Linux.
+> Build instructions for SDLite and projects that use SDLite
 
-> If you just want the easiest Windows setup, use the **SDLite Installer** release EXE. It downloads SDLite + SDL2 + SDL2_image and lays out the correct folder tree automatically.
+Clean, consistent build guidance for **Windows**, **Linux**, and optional cross‑compiling.
 
 ---
 
-## Project layout
+## 📁 Expected Project Layout
 
-SDLite expects this structure (created by the installer):
+SDLite expects this structure (created by the installer or manual setup):
 
 ```text
 SDLite/
   include/
   src/
-  res/
+  res/                (optional assets)
   external/
     SDL2/
       x86_64-w64-mingw32/
@@ -31,200 +31,194 @@ SDLite/
     release/
 ```
 
-- `include/` and `src/` are SDLite’s headers and source.
-- `res/` is optional assets.
-- `external/` contains the SDL2 toolchain folders.
-- `bin/` is a convenient output location.
+- `include/` + `src/` → SDLite source code
+- `res/` → assets (textures, audio, fonts, etc.)
+- `external/` → SDL2 + SDL2_image dependencies
+- `bin/` → compiled executables
 
 ---
 
-## Windows 
+## 🪟 Windows (MinGW-w64)
 
-Recommended: [MinGW-w64 GCC](https://winlibs.com/#download-release)
+### ✅ Recommended compiler
+Use **MinGW-w64 GCC** (WinLibs builds work best):
 
-Make sure to choose the latest GCC (with POSIX threads) + MinGW-w64 x.x.x (UCRT)
+- Architecture: **x86_64**
+- Threads: **POSIX**
+- Runtime: **UCRT**
 
-### Building (Windows)
+Download: https://winlibs.com/
 
-If you build manually (example):
+Make sure this works in your terminal:
 
-You can build using the included Sublime project or manually with the provided commands.
+```bat
+gcc --version
+```
 
-**Debug build:**
+---
 
-```bash
-gcc -std=c17 -g -O0 -DDEBUG -Wall -Wextra \
-  -I include \
-  -I external\SDL2\x86_64-w64-mingw32\include \
-  -I external\SDL2_image\x86_64-w64-mingw32\include \
-  src\*.c src\engine\*.c \
-  -L external\SDL2\x86_64-w64-mingw32\lib \
-  -L external\SDL2_image\x86_64-w64-mingw32\lib \
-  -lSDL2 -lSDL2_image \
+## 🔨 Manual Build (Windows)
+
+> ℹ️ SDL headers normally live in:
+> `.../include/SDL2/SDL.h`
+> so your include paths should end with `/include/SDL2`
+
+### 🐛 Debug build
+
+```bat
+gcc -std=c17 -g -O0 -DDEBUG -Wall -Wextra ^
+  -I include ^
+  -I external\SDL2\x86_64-w64-mingw32\include\SDL2 ^
+  -I external\SDL2_image\x86_64-w64-mingw32\include\SDL2 ^
+  src\*.c src\engine\*.c ^
+  -L external\SDL2\x86_64-w64-mingw32\lib ^
+  -L external\SDL2_image\x86_64-w64-mingw32\lib ^
+  -lSDL2main -lSDL2 -lSDL2_image ^
   -o bin\debug\main_debug.exe
 ```
 
-**Release build:**
+### 🚀 Release build
 
-```bash
-gcc -std=c17 -O2 -DNDEBUG -Wall -Wextra \
-  -I include \
-  -I external\SDL2\x86_64-w64-mingw32\include \
-  -I external\SDL2_image\x86_64-w64-mingw32\include \
-  src\*.c src\engine\*.c \
-  -L external\SDL2\x86_64-w64-mingw32\lib \
-  -L external\SDL2_image\x86_64-w64-mingw32\lib \
-  -lSDL2 -lSDL2_image \
+```bat
+gcc -std=c17 -O2 -DNDEBUG -Wall -Wextra ^
+  -I include ^
+  -I external\SDL2\x86_64-w64-mingw32\include\SDL2 ^
+  -I external\SDL2_image\x86_64-w64-mingw32\include\SDL2 ^
+  src\*.c src\engine\*.c ^
+  -L external\SDL2\x86_64-w64-mingw32\lib ^
+  -L external\SDL2_image\x86_64-w64-mingw32\lib ^
+  -lSDL2main -lSDL2 -lSDL2_image ^
   -o bin\release\main_release.exe
 ```
 
 ---
 
-### 4) Running your program
+## ▶️ Running on Windows (DLLs required)
 
-SDL2 DLLs must be discoverable at runtime. The easiest approach:
+Windows requires SDL DLLs next to your executable.
 
-- Copy the required DLLs from:
-  - `external/SDL2/x86_64-w64-mingw32/bin/`
-  - `external/SDL2_image/x86_64-w64-mingw32/bin/`
-- Into the same folder as your built `.exe` (for example `bin/debug/`).
-
-Common DLLs you may need next to your exe include:
-- `SDL2.dll`
-- `SDL2_image.dll`
-- and any image format DLLs shipped with SDL2_image (depending on the build)
-
----
-
-## 🔁 Cross-compiling for Windows (from Linux)
-
-If you want to build Windows binaries on Linux, install MinGW:
-
-### Arch Linux
-
-```bash
-sudo pacman -S mingw-w64-gcc
-```
-
-### Debian / Ubuntu
-
-```bash
-sudo apt install mingw-w64
-```
-
-Then use the provided script with:
-
-```bash
-./scripts/compile.sh --build win-debug
-./scripts/compile.sh --build win-release
-```
-
----
-
-## 🛠️ Build Script Usage
-
-A helper script is included for Linux builds:
-
-```bash
-chmod +x scripts/compile.sh
-
-./scripts/compile.sh --build linux-debug
-./scripts/compile.sh --build linux-release
-./scripts/compile.sh --build win-debug
-./scripts/compile.sh --build win-release
-
-# Optional: run after building
-./scripts/compile.sh --build linux-release --run
-```
-
----
-
-## 📁 Assets
-
-After building, make sure the `res` folder is copied into:
+Copy these into:
 
 ```text
 bin/debug/
 bin/release/
 ```
 
-Otherwise the executable will not find your assets.
-
----
-
-## Building without the installer (Windows manual dependency setup)
-
-If you don’t use the installer:
-
-1. Download the **SDL2 MinGW dev ZIP** and **SDL2_image MinGW dev ZIP**.
-2. Extract them.
-3. Place them like this:
+From:
 
 ```text
-external/SDL2/x86_64-w64-mingw32/(include,lib,bin)
-external/SDL2_image/x86_64-w64-mingw32/(include,lib,bin)
+external/SDL2/x86_64-w64-mingw32/bin/
+external/SDL2_image/x86_64-w64-mingw32/bin/
 ```
 
-If your extracted ZIP already contains the `x86_64-w64-mingw32` folder, put that folder directly under `external/SDL2/` (same for SDL2_image).
+Common files:
+
+- `SDL2.dll`
+- `SDL2_image.dll`
+- Any extra image format DLLs (depending on build)
+
+If missing, Windows will show:
+> ❌ "SDL2.dll was not found"
 
 ---
 
-## Building the installer (Windows)
+## 🐧 Linux Builds
 
-The installer is written in Python and can be bundled into a single EXE.
+Install dependencies with your package manager:
 
-### 1) Install Python
+### Arch Linux
 
-Use Python 3.14.x (or a compatible version).
-
-### 2) Install PyInstaller
-
-```bat
-py -3.14 -m pip install --upgrade pyinstaller
+```bash
+sudo pacman -S sdl2 sdl2_image gcc
 ```
 
-### 3) Build the EXE
+### Debian / Ubuntu
 
-From the folder containing `installer.py`:
-
-```bat
-py -3.14 -m PyInstaller --onefile --noconsole --name SDLiteSetup installer.py
+```bash
+sudo apt install gcc libsdl2-dev libsdl2-image-dev
 ```
 
-Output:
+### Example Linux build
+
+```bash
+gcc -std=c17 -O2 -Wall -Wextra \
+  src/*.c src/engine/*.c \
+  -I include \
+  $(sdl2-config --cflags --libs) -lSDL2_image \
+  -o bin/release/app
+```
+
+---
+
+## 🧪 Cross-compiling Windows binaries from Linux
+
+Install MinGW:
+
+### Arch
+```bash
+sudo pacman -S mingw-w64-gcc
+```
+
+### Debian / Ubuntu
+```bash
+sudo apt install mingw-w64
+```
+
+Typical compiler:
+
+```bash
+x86_64-w64-mingw32-gcc
+```
+
+You can reuse the same Windows flags, just replace `gcc` with the MinGW compiler.
+
+---
+
+## 📦 Assets (`res` folder)
+
+If your project uses assets, copy them next to your executable:
 
 ```text
-dist\SDLiteSetup.exe
+bin/debug/res/
+bin/release/res/
 ```
 
----
-
-## Troubleshooting
-
-### “SDL2.dll was not found” / app won’t start
-
-Copy SDL2 DLLs next to your exe:
-- `external/SDL2/x86_64-w64-mingw32/bin/*.dll`
-- `external/SDL2_image/x86_64-w64-mingw32/bin/*.dll`
-
-### Include not found / link errors
-
-Double-check your include/library paths:
-- `.../include`
-- `.../lib`
-
-### 32-bit vs 64-bit mismatch
-
-Make sure you’re using:
-- MinGW **x86_64** tools
-- SDL2/SDL2_image **x86_64** dev zips
+If missing, your program may run but fail to load textures, fonts, audio, etc.
 
 ---
 
-## Getting help
+## 🧯 Troubleshooting
 
-If something breaks:
-- open an issue
-- include your OS, compiler, and the full build command/output
-- if using the installer, paste the installer log output
+### ❌ SDL2.dll not found
+You forgot to copy DLLs next to the executable.
+
+### ❌ Cannot find SDL.h
+Your include path should end with:
+
+```text
+.../include/SDL2
+```
+
+Not just:
+
+```text
+.../include
+```
+
+### ❌ 32-bit vs 64-bit issues
+All of these must match:
+
+- Compiler: `x86_64-w64-mingw32-gcc`
+- SDL2 dev package: x86_64
+- SDL2_image dev package: x86_64
+
+---
+
+## 🔗 Useful Links
+
+- SDL2 Docs: https://wiki.libsdl.org/SDL2/
+- SDL2_image Docs: https://wiki.libsdl.org/SDL2_image/
+- SDL2 Releases: https://github.com/libsdl-org/SDL/releases
+- SDL2_image Releases: https://github.com/libsdl-org/SDL_image/releases
+- WinLibs (MinGW-w64): https://winlibs.com/
 
