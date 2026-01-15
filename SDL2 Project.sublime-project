@@ -1,0 +1,97 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"file_exclude_patterns":
+			[
+				"*.exe",
+				"*.o",
+				"*.obj",
+				"*.pdb",
+				"*.sublime-workspace",
+				"*.sublime-project"
+			],
+			"folder_exclude_patterns":
+			[
+				".git",
+				".vs",
+				".vscode",
+				"node_modules",
+				"build",
+				"dist"
+			]
+		}
+	],
+
+	"settings":
+	{
+		"tab_size": 4,
+		"translate_tabs_to_spaces": false,
+		"trim_trailing_white_space_on_save": true,
+		"ensure_newline_at_eof_on_save": true
+	},
+
+	"build_systems":
+	[
+		{
+			"name": "Build Debug (SDL2)",
+			"working_dir": "${project_path}",
+			"shell": true,
+
+			"cmd": [
+				"gcc",
+				"-std=c17",
+				"-g", "-O0", "-DDEBUG",
+				"-Wall", "-Wextra",
+
+				"-I", "include\\engine",
+				"-I", "external\\SDL2\\include\\SDL2",
+				"-I", "external\\SDL2_image\\include\\SDL2",
+
+				"src\\*.c",
+				"src\\engine\\*.c",
+
+				"-L", "external\\SDL2\\lib",
+				"-L", "external\\SDL2_image\\lib",
+				"-lSDL2",
+				"-lSDL2_image",
+				"-lopengl32",
+
+				"-o", "bin\\debug\\main_debug.exe"
+			],
+
+			"selector": "source.c"
+		},
+
+		{
+			"name": "Build Release (SDL2)",
+			"working_dir": "${project_path}",
+			"shell": true,
+
+			"cmd": [
+				"gcc",
+				"-std=c17",
+				"-O2", "-DNDEBUG",
+				"-Wall", "-Wextra",
+
+				"-I", "include\\engine",
+				"-I", "external\\SDL2\\include\\SDL2",
+				"-I", "external\\SDL2_image\\include\\SDL2",
+
+				"src\\*.c",
+				"src\\engine\\*.c",
+
+				"-L", "external\\SDL2\\lib",
+				"-L", "external\\SDL2_image\\lib",
+				"-lSDL2",
+				"-lSDL2_image",
+				"-lopengl32",
+
+				"-o", "bin\\release\\main_release.exe"
+			],
+
+			"selector": "source.c"
+		}
+	]
+}
