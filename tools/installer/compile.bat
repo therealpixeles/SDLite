@@ -1,0 +1,1 @@
+gcc -std=c17 -O2 -s -municode SDLiteInstaller.c -o SDLiteSetup.exe -static-libgcc -lwinhttp -lole32 -loleaut32 -lshell32 -lcomctl32 -luuid -lshlwapi -lbcrypt -lgdi32
