@@ -96,20 +96,59 @@ Common DLLs you may need next to your exe include:
 
 ---
 
-## Linux Build
+## 🔁 Cross-compiling for Windows (from Linux)
 
-If you have a Makefile:
+If you want to build Windows binaries on Linux, install MinGW:
 
-```bash
-make
-```
-
-Manual build example:
+### Arch Linux
 
 ```bash
-gcc -Iinclude -Iinclude/engine src/*.c src/engine/*.c -o bin/debug/app \
-  $(sdl2-config --cflags --libs) -lSDL2_image
+sudo pacman -S mingw-w64-gcc
 ```
+
+### Debian / Ubuntu
+
+```bash
+sudo apt install mingw-w64
+```
+
+Then use the provided script with:
+
+```bash
+./scripts/compile.sh --build win-debug
+./scripts/compile.sh --build win-release
+```
+
+---
+
+## 🛠️ Build Script Usage
+
+A helper script is included for Linux builds:
+
+```bash
+chmod +x scripts/compile.sh
+
+./scripts/compile.sh --build linux-debug
+./scripts/compile.sh --build linux-release
+./scripts/compile.sh --build win-debug
+./scripts/compile.sh --build win-release
+
+# Optional: run after building
+./scripts/compile.sh --build linux-release --run
+```
+
+---
+
+## 📁 Assets
+
+After building, make sure the `res` folder is copied into:
+
+```text
+bin/debug/
+bin/release/
+```
+
+Otherwise the executable will not find your assets.
 
 ---
 
